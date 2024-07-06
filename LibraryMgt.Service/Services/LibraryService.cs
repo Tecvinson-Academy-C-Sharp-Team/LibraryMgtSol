@@ -64,12 +64,23 @@ namespace LibraryMgt.Service.Services
             if (user is not null)
                 throw new ArgumentNullException("The user must be a valid user!");
 
-            var book = books.FirstOrDefault(b => b.Title == title);
+            var book = GetBooks().FirstOrDefault(b => b.Title == title);
             if (book == null && book.IsLocked)
                 throw new ArgumentNullException("The book you want borrow is not available right now.");
 
             book.IsLocked = true;
+            UpdateBook(book);
             return book;
+        }
+
+        public void ReturnBorrow(Book book)
+        {
+            if (book is null)
+                throw new ArgumentNullException("You must provide a book!");
+
+            book.IsLocked = false;
+
+            UpdateBook(book);
         }
     }
 }
