@@ -21,7 +21,7 @@ namespace LibraryMgt.Service.Services
             Ensure proper handling of cases where a book cannot be borrowed or returned (e.g., book is already borrowed or not found in the library).
          */
 
-        public List<Book> books { get; set; } // Collection i.e Book DB...
+        public List<Book> books = new List<Book>(); // Collection i.e Book DB...
 
         // Create CRUD
         // Create
