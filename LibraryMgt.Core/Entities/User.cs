@@ -14,6 +14,6 @@ namespace LibraryMgt.Core.Entities
         public bool IsAdmin { get; set; }
         public bool IsActive { get; set; }
 
-        public List<Book> BorrowedBooks { get; set; }
+        public List<Book> BorrowedBooks { get; set; } = new List<Book>();
     }
 }

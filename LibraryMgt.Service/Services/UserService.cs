@@ -31,7 +31,7 @@ namespace LibraryMgt.Service.Services
             users.Add(user);
         }
 
-        public User GetUser(int id)
+        public User GetUser(long id)
         {
             var user = users.FirstOrDefault(x => x.Id == id);
             return user;
@@ -47,7 +47,7 @@ namespace LibraryMgt.Service.Services
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentNullException("The name of the book is required!");
 
-            if (user is not null)
+            if (user is null)
                 throw new ArgumentNullException("The user must be a valid user!");
 
             var book = _libraryService.GetBooks().FirstOrDefault(b => b.Title == title);
@@ -55,6 +55,7 @@ namespace LibraryMgt.Service.Services
                 throw new ArgumentNullException("The book you want borrow is not available right now.");
 
             book.IsLocked = true;
+            user.BorrowedBooks.Add(book);
             _libraryService.UpdateBook(book);
             return book;
         }
@@ -84,7 +85,6 @@ namespace LibraryMgt.Service.Services
             {
                 return false;
             }
-
         }
 
         public static bool IsFullNameValid(string fullName)
@@ -98,6 +98,5 @@ namespace LibraryMgt.Service.Services
                 return false;
             }
         }
-
     }
 }
