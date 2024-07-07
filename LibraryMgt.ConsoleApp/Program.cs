@@ -67,6 +67,12 @@ Console.WriteLine($"{userMessage}: {JsonSerializer.Serialize(user)}");
 Console.WriteLine("==================================================================================");
 Console.WriteLine("\r\n\r\n");
 
+// Ask if user is new or an existing user
+// if new user, get his info and create user else collect user Id.
+// Ask for book of choice from user, collect book Id.
+// Check if book is available, If available allow the user to borrow book, else tell him the book is not
+// available.
+
 // Create user and validate user inputs
 Console.WriteLine("Create a new user.");
 Console.WriteLine("Please enter your full name: ");
