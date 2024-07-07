@@ -72,35 +72,49 @@ Console.WriteLine("\r\n\r\n");
 // Ask for book of choice from user, collect book Id.
 // Check if book is available, If available allow the user to borrow book, else tell him the book is not
 // available.
+var newUser = new User();
+Console.WriteLine("Hi, Are you a new user of this library?\r\n\r\n");
+Console.WriteLine("Enter 'Yes' or 'No'");
+string newUserInput = Console.ReadLine();
 
-// Create user and validate user inputs
-Console.WriteLine("Create a new user.");
-Console.WriteLine("Please enter your full name: ");
-string fullName = Console.ReadLine();
-// Ensure the fullName is a valid First and last name.
-bool isFullName = UserService.IsFullNameValid(fullName);
-// Enfore FullName is valid
-Console.WriteLine("The entered fullName is not valid!\r\nPlease enter your full name: ");
-fullName = Console.ReadLine();
-Console.WriteLine("Enter your email: ");
-string email = Console.ReadLine();
-
-// Ensure the email is a valid email address.
-bool isEmail = UserService.IsValidEmail(email);
-Console.WriteLine("The entered email is not valid!\r\nPlease enter your email address (e.g example@mail.com) ");
-// Enforce Email is valid.
-email = Console.ReadLine();
-
-User newUser = new User()
+if (newUserInput.Equals("YeS", StringComparison.OrdinalIgnoreCase))
 {
-    Id = user.Id + 1,
-    Name = fullName,
-    Email = email,
-    IsActive = true,
-    IsAdmin = false
-};
+    // Create user and validate user inputs
+    Console.WriteLine("Create a new user.");
+    Console.WriteLine("Please enter your full name: ");
+    string fullName = Console.ReadLine();
+    // Ensure the fullName is a valid First and last name.
+    bool isFullName = UserService.IsFullNameValid(fullName);
+    // Enfore FullName is valid
+    Console.WriteLine("The entered fullName is not valid!\r\nPlease enter your full name: ");
+    fullName = Console.ReadLine();
+    Console.WriteLine("Enter your email: ");
+    string email = Console.ReadLine();
 
-userService.CreateUser(newUser);
+    // Ensure the email is a valid email address.
+    bool isEmail = UserService.IsValidEmail(email);
+    Console.WriteLine("The entered email is not valid!\r\nPlease enter your email address (e.g example@mail.com) ");
+    // Enforce Email is valid.
+    email = Console.ReadLine();
+
+    newUser = new User()
+    {
+        Id = user.Id + 1,
+        Name = fullName,
+        Email = email,
+        IsActive = true,
+        IsAdmin = false
+    };
+
+    userService.CreateUser(newUser);
+}
+else
+{
+    Console.WriteLine("Please enter your user Id:");
+    long userId = Convert.ToInt64(Console.ReadLine());
+
+    newUser = userService.GetUser(userId);
+}
 
 var listOfUsers = userService.GetUsers();
 var users = JsonSerializer.Serialize(listOfUsers);
@@ -109,8 +123,8 @@ Console.WriteLine(users);
 Console.WriteLine("==================================================================================");
 Console.WriteLine("\r\n\r\n");
 
-var userById = userService.GetUser(newUser.Id);
-var book = userService.BorrowBook(book2.Title, userById);
+//newUser = userService.GetUser(newUser.Id);
+var book = userService.BorrowBook(book2.Title, newUser);
 
 Console.WriteLine("Book just borrowed: ", book);
 
