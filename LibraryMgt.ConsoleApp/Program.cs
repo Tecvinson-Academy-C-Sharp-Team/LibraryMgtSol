@@ -67,16 +67,28 @@ Console.WriteLine($"{userMessage}: {JsonSerializer.Serialize(user)}");
 Console.WriteLine("==================================================================================");
 Console.WriteLine("\r\n\r\n");
 
+// Create user and validate user inputs
 Console.WriteLine("Create a new user.");
-Console.WriteLine("Please enter your name: ");
-string userName = Console.ReadLine();
+Console.WriteLine("Please enter your full name: ");
+string fullName = Console.ReadLine();
+// Ensure the fullName is a valid First and last name.
+bool isFullName = UserService.IsFullNameValid(fullName);
+// Enfore FullName is valid
+Console.WriteLine("The entered fullName is not valid!\r\nPlease enter your full name: ");
+fullName = Console.ReadLine();
 Console.WriteLine("Enter your email: ");
 string email = Console.ReadLine();
+
+// Ensure the email is a valid email address.
+bool isEmail = UserService.IsValidEmail(email);
+Console.WriteLine("The entered email is not valid!\r\nPlease enter your email address (e.g example@mail.com) ");
+// Enforce Email is valid.
+email = Console.ReadLine();
 
 User newUser = new User()
 {
     Id = user.Id + 1,
-    Name = userName,
+    Name = fullName,
     Email = email,
     IsActive = true,
     IsAdmin = false
