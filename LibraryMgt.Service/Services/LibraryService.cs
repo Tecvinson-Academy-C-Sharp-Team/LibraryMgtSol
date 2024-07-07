@@ -55,32 +55,5 @@ namespace LibraryMgt.Service.Services
         {
             books.RemoveAt(id);
         }
-
-        public Book BorrowBook(string title, User user)
-        {
-            if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentNullException("The name of the book is required!");
-
-            if (user is not null)
-                throw new ArgumentNullException("The user must be a valid user!");
-
-            var book = GetBooks().FirstOrDefault(b => b.Title == title);
-            if (book == null && book.IsLocked)
-                throw new ArgumentNullException("The book you want borrow is not available right now.");
-
-            book.IsLocked = true;
-            UpdateBook(book);
-            return book;
-        }
-
-        public void ReturnBorrow(Book book)
-        {
-            if (book is null)
-                throw new ArgumentNullException("You must provide a book!");
-
-            book.IsLocked = false;
-
-            UpdateBook(book);
-        }
     }
 }
