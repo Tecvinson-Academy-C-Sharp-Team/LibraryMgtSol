@@ -102,3 +102,15 @@ Console.WriteLine(users);
 
 Console.WriteLine("==================================================================================");
 Console.WriteLine("\r\n\r\n");
+
+var userById = userService.GetUser(newUser.Id);
+var book = userService.BorrowBook(book2.Title, userById);
+
+Console.WriteLine("Book just borrowed: ", book);
+
+listOfUsers = userService.GetUsers();
+users = JsonSerializer.Serialize(listOfUsers);
+Console.WriteLine(users);
+
+Console.WriteLine("==================================================================================");
+Console.WriteLine("\r\n\r\n");
