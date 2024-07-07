@@ -1,11 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Text.Json;
 using LibraryMgt.Core.Entities;
 using LibraryMgt.Service.Services;
 
-Console.WriteLine("Hello, World!");
-
-Console.WriteLine("Create a user");
+Console.WriteLine("Create a user\n=====================================");
 User user = new User()
 {
     Id = 1,
@@ -20,4 +19,4 @@ string userMessage = "New user created";
 
 userService.CreateUser(user);
 
-Console.WriteLine(userMessage);
+Console.WriteLine($"{userMessage}: {JsonSerializer.Serialize(user)}");
