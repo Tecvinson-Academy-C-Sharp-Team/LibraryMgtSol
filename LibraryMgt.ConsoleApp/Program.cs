@@ -58,7 +58,35 @@ var listofbooks = libraryService.GetBooks();
 string data = JsonSerializer.Serialize(listofbooks);
 
 Console.WriteLine("list of books in library");
-
 Console.WriteLine(data);
 
+Console.WriteLine("\r\n\r\n");
+
 Console.WriteLine($"{userMessage}: {JsonSerializer.Serialize(user)}");
+
+Console.WriteLine("==================================================================================");
+Console.WriteLine("\r\n\r\n");
+
+Console.WriteLine("Create a new user.");
+Console.WriteLine("Please enter your name: ");
+string userName = Console.ReadLine();
+Console.WriteLine("Enter your email: ");
+string email = Console.ReadLine();
+
+User newUser = new User()
+{
+    Id = user.Id + 1,
+    Name = userName,
+    Email = email,
+    IsActive = true,
+    IsAdmin = false
+};
+
+userService.CreateUser(newUser);
+
+var listOfUsers = userService.GetUsers();
+var users = JsonSerializer.Serialize(listOfUsers);
+Console.WriteLine(users);
+
+Console.WriteLine("==================================================================================");
+Console.WriteLine("\r\n\r\n");
