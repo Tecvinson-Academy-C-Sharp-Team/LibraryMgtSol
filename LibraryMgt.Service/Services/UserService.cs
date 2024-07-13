@@ -52,7 +52,7 @@ namespace LibraryMgt.Service.Services
 
             var book = _libraryService.GetBooks().FirstOrDefault(b => b.Title == title);
             if (book == null && book.IsLocked)
-                throw new ArgumentNullException("The book you want borrow is not available right now.");
+                throw new ArgumentNullException("The book you want to borrow is not available right now.");
 
             book.IsLocked = true;
             user.BorrowedBooks.Add(book);
@@ -77,9 +77,10 @@ namespace LibraryMgt.Service.Services
 
             try
             {
-                return Regex.IsMatch(email, @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\\+/=\?\^`\{\}\|~\w]))(?<=[0-9a-z])@))" +
-                                            @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-0-9a-z][0-9a-z]\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$",
-                    RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+                return Regex.IsMatch(email,
+                    @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                    RegexOptions.IgnoreCase,
+                    TimeSpan.FromMilliseconds(250));
             }
             catch (RegexMatchTimeoutException)
             {
@@ -89,9 +90,16 @@ namespace LibraryMgt.Service.Services
 
         public static bool IsFullNameValid(string fullName)
         {
+            //this was initially missing
+            if (string.IsNullOrWhiteSpace(fullName))
+                return false;
+
             try
             {
-                return Regex.IsMatch(fullName, "^[a-zA-Z]{3,}(?: [a-zA-Z]+){1,2}$", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+                return Regex.IsMatch(fullName,
+                    @"^[a-zA-Z]{3,}(?: [a-zA-Z]{3,})+$",
+                    RegexOptions.IgnoreCase,
+                    TimeSpan.FromMilliseconds(250));
             }
             catch (RegexMatchTimeoutException)
             {

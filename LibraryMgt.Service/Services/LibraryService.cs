@@ -34,16 +34,22 @@ namespace LibraryMgt.Service.Services
             books.Add(book);
         }
 
-        public Book GetBook(int id)
-        {
-            var book = books.FirstOrDefault(x => x.Id == id);
-            return book;
-        }
-
         public List<Book> GetBooks()
         {
             return books;
         }
+
+        public Book BorrowBook(long bookId, User user)
+        {
+            var book = books.FirstOrDefault(b => b.Id == bookId && !b.IsBorrow);
+            if (book != null)
+            {
+                book.IsBorrow = true;
+                user.BorrowedBooks.Add(book);
+            }
+            return book;
+        }
+
 
         public void UpdateBook(Book book)
         {
@@ -54,6 +60,17 @@ namespace LibraryMgt.Service.Services
         public void DeleteBook(int id)
         {
             books.RemoveAt(id);
+        }
+
+        public Book ReturnBook(long bookId, User user)
+        {
+            var book = user.BorrowedBooks.FirstOrDefault(b => b.Id == bookId);
+            if (book != null)
+            {
+                book.IsBorrow = false;
+                user.BorrowedBooks.Remove(book);
+            }
+            return book;
         }
     }
 }
