@@ -4,7 +4,7 @@ using System.Text.Json;
 using LibraryMgt.Core.Entities;
 using LibraryMgt.Service.Services;
 
-Console.WriteLine("Create a user\n=====================================");
+
 LibraryService libraryService = new LibraryService();
 UserService userService = new UserService(libraryService);
 User user = new User()
@@ -13,89 +13,92 @@ User user = new User()
     Name = "Godswill David",
     Email = "godswill.david@tecvinsonacademy.com",
     IsAdmin = true,
-    IsActive = true
+    IsActive = true,
+    BorrowedBooks = new List<Book>()
 };
 
-string userMessage = "New user created";
+string userMessage = "\n New user created";
 
-Book book1 = new Book();
-book1.Id = 1;
-book1.Title = "Purple Hibiscus";
-book1.Author = "Chimamanda N";
-book1.ISBN = "091-023";
-book1.IsBorrow = false;
-book1.IsLocked = false;
-book1.Description = "A very nice book";
+Book book1 = new Book()
+{
+    Id = 1,
+    Title = "Purple Hibiscus",
+    Author = "Chimamanda N",
+    ISBN = "091-023",
+    IsBorrow = false,
+    IsLocked = false,
+    Description = "A very nice book"
+};
 
-Book book2 = new Book();
-book2.Id = 2;
-book2.Title = "Things fall Apart";
-book2.Author = "Chinua Achebe";
-book2.ISBN = "090-023";
-book2.IsBorrow = false;
-book2.IsLocked = false;
-book2.Description = "A must read for all";
+Book book2 = new Book()
+{
+    Id = 2,
+    Title = "Things fall Apart",
+    Author = "Chinua Achebe",
+    ISBN = "090-023",
+    IsBorrow = false,
+    IsLocked = false,
+    Description = "A must read for all"
+};
 
-Book book3 = new Book();
-book3.Id = 3;
-book3.Title = "A subtle art of not giving fvck";
-book3.Author = "Masson D";
-book3.ISBN = "089-023";
-book3.IsBorrow = true;
-book3.IsLocked = true;
-book3.Description = "You cant afford to give a fvck";
+Book book3 = new Book()
+{
+    Id = 3,
+    Title = "A subtle art of not giving fvck",
+    Author = "Masson D",
+    ISBN = "089-023",
+    IsBorrow = true,
+    IsLocked = true,
+    Description = "You cant afford to give a fvck"
+};
 
 libraryService.AddBook(book1);
 libraryService.AddBook(book2);
 libraryService.AddBook(book3);
 
 user.BorrowedBooks = new List<Book>();
-user.BorrowedBooks.Add(book2);
+user.BorrowedBooks.Add(book3);
 
 userService.CreateUser(user);
-
-var listofbooks = libraryService.GetBooks();
-string data = JsonSerializer.Serialize(listofbooks);
-
-Console.WriteLine("list of books in library");
-Console.WriteLine(data);
-
-Console.WriteLine("\r\n\r\n");
-
-Console.WriteLine($"{userMessage}: {JsonSerializer.Serialize(user)}");
 
 Console.WriteLine("==================================================================================");
 Console.WriteLine("\r\n\r\n");
 
-// Ask if user is new or an existing user
-// if new user, get his info and create user else collect user Id.
-// Ask for book of choice from user, collect book Id.
-// Check if book is available, If available allow the user to borrow book, else tell him the book is not
-// available.
-var newUser = new User();
 Console.WriteLine("Hi, Are you a new user of this library?\r\n\r\n");
 Console.WriteLine("Enter 'Yes' or 'No'");
 string newUserInput = Console.ReadLine();
 
+User newUser;
 if (newUserInput.Equals("YeS", StringComparison.OrdinalIgnoreCase))
 {
     // Create user and validate user inputs
     Console.WriteLine("Create a new user.");
-    Console.WriteLine("Please enter your full name: ");
-    string fullName = Console.ReadLine();
-    // Ensure the fullName is a valid First and last name.
-    bool isFullName = UserService.IsFullNameValid(fullName);
-    // Enfore FullName is valid
-    Console.WriteLine("The entered fullName is not valid!\r\nPlease enter your full name: ");
-    fullName = Console.ReadLine();
-    Console.WriteLine("Enter your email: ");
-    string email = Console.ReadLine();
 
-    // Ensure the email is a valid email address.
-    bool isEmail = UserService.IsValidEmail(email);
-    Console.WriteLine("The entered email is not valid!\r\nPlease enter your email address (e.g example@mail.com) ");
-    // Enforce Email is valid.
-    email = Console.ReadLine();
+    string fullName;
+    bool isFullNameValid;
+    do
+    {
+        Console.WriteLine("\n Please enter your full name: ");
+        fullName = Console.ReadLine();
+        isFullNameValid = UserService.IsFullNameValid(fullName);
+        if (!isFullNameValid)
+        {
+            Console.WriteLine("\n The entered full name is not valid!\r\nPlease enter your full name with at least two words, each at least three characters long.");
+        }
+    } while (!isFullNameValid);
+
+    string email;
+    bool isEmailValid;
+    do
+    {
+        Console.WriteLine("Enter your email: ");
+        email = Console.ReadLine();
+        isEmailValid = UserService.IsValidEmail(email);
+        if (!isEmailValid)
+        {
+            Console.WriteLine("\nThe entered email is not valid!\r\nPlease enter a valid email address (e.g example@mail.com).");
+        }
+    } while (!isEmailValid);
 
     newUser = new User()
     {
@@ -103,7 +106,8 @@ if (newUserInput.Equals("YeS", StringComparison.OrdinalIgnoreCase))
         Name = fullName,
         Email = email,
         IsActive = true,
-        IsAdmin = false
+        IsAdmin = false,
+        BorrowedBooks = new List<Book>()
     };
 
     userService.CreateUser(newUser);
@@ -116,21 +120,130 @@ else
     newUser = userService.GetUser(userId);
 }
 
-var listOfUsers = userService.GetUsers();
-var users = JsonSerializer.Serialize(listOfUsers);
-Console.WriteLine(users);
-
 Console.WriteLine("==================================================================================");
 Console.WriteLine("\r\n\r\n");
+while (true)
+{
+    Console.WriteLine("What would you like to do?");
+    Console.WriteLine("1. Add a book to the library");
+    Console.WriteLine("2. Borrow a book");
+    Console.WriteLine("3. Return a book");
+    Console.WriteLine("4. View users and the books they have borrowed");
+    Console.WriteLine("5. View available books");
+    Console.WriteLine("6. Exit");
 
-//newUser = userService.GetUser(newUser.Id);
-var book = userService.BorrowBook(book2.Title, newUser);
+    string choice = Console.ReadLine();
 
-Console.WriteLine("Book just borrowed: ", book);
+    switch (choice)
+    {
+        case "1":
+            Console.WriteLine("Enter the book details to add a new book.\n");
 
-listOfUsers = userService.GetUsers();
-users = JsonSerializer.Serialize(listOfUsers);
-Console.WriteLine(users);
+            Book newBook = new Book();
 
-Console.WriteLine("==================================================================================");
-Console.WriteLine("\r\n\r\n");
+            newBook.Id = Convert.ToInt64(libraryService.books.Count + 1);
+
+            Console.WriteLine("Enter Book Title: ");
+            newBook.Title = Console.ReadLine();
+
+            Console.WriteLine("Enter Book Author: ");
+            newBook.Author = Console.ReadLine();
+
+            Console.WriteLine("Enter Book ISBN: ");
+            newBook.ISBN = Console.ReadLine();
+
+            newBook.IsBorrow = false;
+            newBook.IsLocked = false;
+
+            Console.WriteLine("Enter Book Description: ");
+            newBook.Description = Console.ReadLine();
+
+            libraryService.AddBook(newBook);
+            Console.WriteLine("Book added successfully!");
+            break;
+
+        case "2":
+            var availableBooks = libraryService.GetBooks().Where(b => !b.IsBorrow).ToList();
+            Console.WriteLine("Available books for borrowing:");
+            foreach (var book in availableBooks)
+            {
+                //string availableBookss = JsonSerializer.Serialize(book);
+                //Console.WriteLine(availableBookss);
+                Console.WriteLine($"{book.Id}. {book.Title} by {book.Author}");
+            }
+
+            Console.WriteLine("Enter the ID of the book you want to borrow: ");
+            long bookId = Convert.ToInt64(Console.ReadLine());
+
+            var borrowedBook = libraryService.BorrowBook(bookId, newUser);
+            if (borrowedBook != null)
+            {
+                Console.WriteLine($"You have successfully borrowed: {borrowedBook.Title}");
+            }
+            else
+            {
+                Console.WriteLine("Sorry, the book is not available.");
+            }
+            break;
+
+        case "3":
+            Console.WriteLine("Enter the ID of the book you want to return: ");
+            long returnBookId = Convert.ToInt64(Console.ReadLine());
+
+            var returnSuccess = libraryService.ReturnBook(returnBookId, newUser);
+            if (returnSuccess != null)
+            {
+                Console.WriteLine($"You have successfully returned: {returnSuccess.Title}");
+            }
+            else
+            {
+                Console.WriteLine("You have not borrowed this book.");
+            }
+            break;
+
+        case "4":
+            var listOfUsers = userService.GetUsers();
+            foreach (var u in listOfUsers)
+            {
+                string users = JsonSerializer.Serialize(u);
+                Console.WriteLine(users);
+                //Console.WriteLine($"User: {u.Name} ({u.Email})");
+                if (u.BorrowedBooks.Any())
+                {
+                    Console.WriteLine("Borrowed Books:");
+                    foreach (var b in u.BorrowedBooks)
+                    {
+                        string book = JsonSerializer.Serialize(b);
+                        Console.WriteLine(book);
+                        // Console.WriteLine($"- {b.Title} by {b.Author}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No borrowed books.");
+                }
+                Console.WriteLine();
+            }
+            break;
+
+        case "5":
+            var availableBooksList = libraryService.GetBooks().Where(b => !b.IsBorrow).ToList();
+            Console.WriteLine("\nAvailable books in the library:");
+            foreach (var book in availableBooksList)
+            {
+                string availableBookss = JsonSerializer.Serialize(book);
+                Console.WriteLine(availableBookss);
+                // Console.WriteLine($"{book.Id}. {book.Title} by {book.Author}");
+            }
+            break;
+
+        case "6":
+            return;
+
+        default:
+            Console.WriteLine("Invalid choice.");
+            break;
+    }
+    Console.WriteLine("==================================================================================");
+    Console.WriteLine("\r\n\r\n");
+}
