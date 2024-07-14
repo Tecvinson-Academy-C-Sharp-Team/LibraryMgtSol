@@ -1,9 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using LibraryMgt.Core.Entities;
 using LibraryMgt.Service.Services;
-
+using LibraryMgt.Service.Utility;
 
 LibraryService libraryService = new LibraryService();
 UserService userService = new UserService(libraryService);
@@ -16,6 +17,8 @@ User user = new User()
     IsActive = true,
     BorrowedBooks = new List<Book>()
 };
+
+EmailUtil.IsValidEmail(user.Email);
 
 string userMessage = "\n New user created";
 
@@ -110,14 +113,15 @@ if (newUserInput.Equals("YeS", StringComparison.OrdinalIgnoreCase))
         BorrowedBooks = new List<Book>()
     };
 
-    userService.CreateUser(newUser);
+    //userService.CreateUser(newUser);
+    userService.CreateUser(fullName, email);
 }
 else
 {
     Console.WriteLine("Please enter your user Id:");
     long userId = Convert.ToInt64(Console.ReadLine());
 
-    newUser = userService.GetUser(userId);
+    newUser = userService.GetUserById(userId);
 }
 
 Console.WriteLine("==================================================================================");
@@ -238,6 +242,10 @@ while (true)
             break;
 
         case "6":
+            Dog bingo = new Dog();
+            bingo.Eat();
+            bingo.Move("Forward");
+            bingo.EatAndMove("Backwards");
             return;
 
         default:
@@ -246,4 +254,28 @@ while (true)
     }
     Console.WriteLine("==================================================================================");
     Console.WriteLine("\r\n\r\n");
+
+    // a notification system for user to return their borrowed book
+    /// Topics for today.
+    /// Encapsulation and access modifiers
+    /// Packages and static keyword
+    ///
+    /// Exception handling(try-catch, throw, throws)
+    /// When error occur within what happens.
+    /// Custom exceptions
+    ///
+    ///
+    ///
+    /// static keyword
+    /// the new keyword
+    /// Advanced OOP Concepts in C# And Exception handling
+    /// 1. Polymorphism
+    /// 2. Encapsulation
+    /// 3. Inheritance
+    /// 4. Abstraction
+    ///  - Interface
+    /// Exceptions and there handling
+    /// try - catch - finnaly
+
+    // Simplicity is the ultimate sophistication.
 }

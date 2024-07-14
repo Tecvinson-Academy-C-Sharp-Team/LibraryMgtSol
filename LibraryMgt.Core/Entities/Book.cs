@@ -15,5 +15,9 @@ namespace LibraryMgt.Core.Entities
         public string ISBN { get; set; }
         public bool IsBorrow { get; set; }
         public bool IsLocked { get; set; }
+
+        public int DurationOfBorrow { get; set; }
+        public DateTime BorrowDateTime { get; set; } = DateTime.Now;
+        public DateTime BookReturnDate { get; set; }
     }
 }
