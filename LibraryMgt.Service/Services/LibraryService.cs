@@ -41,16 +41,46 @@ namespace LibraryMgt.Service.Services
 
         public Book BorrowBook(long bookId, User user)
         {
-            var book = books.FirstOrDefault(b => b.Id == bookId && !b.IsBorrow);
+            var book = books.OfType<Book>().FirstOrDefault(b => b.Id == bookId && !b.IsBorrowed);
             if (book != null)
             {
-                book.IsBorrow = true;
-                user.BorrowedBooks.Add(book);
+                try
+                {
+                    book.Borrow(user);
+                    LibrarySettings.IncrementBorrowedItems();
+                }
+                catch (ItemAlreadyBorrowedException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Book not available for borrowing.");
             }
             return book;
         }
-
-
+        public Book ReturnBook(long bookId, User user)
+        {
+            var book = user.BorrowedBooks.OfType<Book>().FirstOrDefault(b => b.Id == bookId);
+            if (book != null)
+            {
+                try
+                {
+                    book.Return(user);
+                    LibrarySettings.DecrementBorrowedItems();
+                }
+                catch (ItemNotFoundException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                Console.WriteLine("You have not borrowed this book.");
+            }
+            return book;
+        }
         public void UpdateBook(Book book)
         {
             books.Remove(book);
@@ -62,15 +92,36 @@ namespace LibraryMgt.Service.Services
             books.RemoveAt(id);
         }
 
-        public Book ReturnBook(long bookId, User user)
+
+        //  Collection of Library items
+        public List<LibraryItem> items = new List<LibraryItem>();
+        
+        public void AddLibraryItem(LibraryItem item)
         {
-            var book = user.BorrowedBooks.FirstOrDefault(b => b.Id == bookId);
-            if (book != null)
+            items.Add(item);
+        }
+        public List<LibraryItem>
+            GetLibraryItems()
+        {
+            return items;
+        }
+        public LibraryItem BorrowItem(long itemId, User user)
+        {
+            var item = items.FirstOrDefault(i => i.Id == itemId && i is IBorrowable && !(i as IBorrowable).IsBorrowed);
+            if (item != null && item is IBorrowable borrowable)
             {
-                book.IsBorrow = false;
-                user.BorrowedBooks.Remove(book);
+                borrowable.Borrow(user);
             }
-            return book;
+            return item;
+        }
+        public LibraryItem ReturnItem(long itemId, User user)
+        {
+            var item = items.FirstOrDefault(i => i.Id == itemId && i is IBorrowable borrowable && borrowable.IsBorrowed);
+            if (item != null && item is IBorrowable borrowable)
+            {
+                borrowable.Return(user);
+            }
+            return item;
         }
     }
 }
