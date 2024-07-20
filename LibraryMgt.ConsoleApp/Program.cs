@@ -14,7 +14,8 @@ User user = new User()
     Email = "godswill.david@tecvinsonacademy.com",
     IsAdmin = true,
     IsActive = true,
-    BorrowedBooks = new List<Book>()
+    BorrowedBooks = new List<Book>(),
+    BorrowedItems = new List<LibraryItem>()
 };
 
 string userMessage = "\n New user created";
@@ -52,12 +53,52 @@ Book book3 = new Book()
     Description = "You cant afford to give a fvck"
 };
 
+Magazine magazine1 = new Magazine()
+{
+    Id = 1,
+    Title = "NewsTime Magazine",
+    Author = "Time",
+    IssueNumber = "July, 2024"
+};
+
+Magazine magazine2 = new Magazine()
+{
+    Id = 2,
+    Title = "Food Network Magazine",
+    Author = "Food Network Society",
+    IssueNumber = "June, 2024"
+};
+
+DVD dvd1 = new LibraryMgt.Core.Entities.DVD()
+{
+    Id = 1,
+    Title = "Rush Hour",
+    Director = "Jackie & Chris",
+    Duration = "145 minutes"
+};
+
+DVD dvd2 = new LibraryMgt.Core.Entities.DVD()
+{
+    Id = 2,
+    Title = "Rush Hour 2",
+    Director = "Jackie & Chris",
+    Duration = "156 minutes"
+};
+
 libraryService.AddBook(book1);
 libraryService.AddBook(book2);
 libraryService.AddBook(book3);
+libraryService.AddLibraryItem(magazine1);
+libraryService.AddLibraryItem(magazine2);
+libraryService.AddLibraryItem(dvd1);
+libraryService.AddLibraryItem(dvd2);
 
 user.BorrowedBooks = new List<Book>();
 user.BorrowedBooks.Add(book3);
+user.BorrowedItems.Add(magazine1);
+user.BorrowedItems.Add(magazine2);
+user.BorrowedItems.Add(dvd1);
+user.BorrowedItems.Add(dvd2);
 
 userService.CreateUser(user);
 
@@ -129,7 +170,8 @@ while (true)
     Console.WriteLine("2. Borrow a book");
     Console.WriteLine("3. Return a book");
     Console.WriteLine("4. View users and the books they have borrowed");
-    Console.WriteLine("5. View available books");
+    Console.WriteLine("5. View Library Items");
+    Console.WriteLine("6. View books in the library");
     Console.WriteLine("6. Exit");
 
     string choice = Console.ReadLine();
@@ -227,17 +269,28 @@ while (true)
             break;
 
         case "5":
-            var availableBooksList = libraryService.GetBooks().Where(b => !b.IsBorrow).ToList();
-            Console.WriteLine("\nAvailable books in the library:");
-            foreach (var book in availableBooksList)
+            //var availableBooksList = libraryService.GetBooks().Where(b => !b.IsBorrow).ToList();
+            Console.WriteLine("\nAvailable Items in the library:");
+            foreach (var item in libraryService.GetLibraryItems())
             {
-                string availableBookss = JsonSerializer.Serialize(book);
-                Console.WriteLine(availableBookss);
+                string GetLibraryItems = JsonSerializer.Serialize(item);
+                Console.WriteLine(GetLibraryItems);
                 // Console.WriteLine($"{book.Id}. {book.Title} by {book.Author}");
             }
             break;
 
         case "6":
+            var availableBooksList = libraryService.GetBooks().Where(b => !b.IsBorrow).ToList();
+            Console.WriteLine("\nAvailable books in the library:");
+            foreach (var availablebookss in libraryService.GetBooks())
+            {
+                string book = JsonSerializer.Serialize(availablebookss);
+                Console.WriteLine(availablebookss);
+               // Console.WriteLine($"{book.Id}. {book.Title} by {book.Author}");
+            }
+            break;
+
+        case "7":
             return;
 
         default:
